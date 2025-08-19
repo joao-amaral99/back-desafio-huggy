@@ -1,0 +1,11 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: projeto_huggy_postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: projeto-huggy
+      POSTGRES_USER: userhuggy
+      POSTGRES_PASSWORD: userhuggy
