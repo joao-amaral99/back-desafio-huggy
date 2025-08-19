@@ -1,15 +1,15 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\Auth\HuggyController;
 
-Route::get('/auth/google/redirect', [GoogleController::class, 'redirectToGoogle']);
-Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
 Route::get('/', function () {
   return response()->json(['status' => 'API online']);
 });
+
+Route::get('/oauth/huggy/redirect', [HuggyController::class, 'redirectToHuggy']);
 
 Route::get('/contacts', [ContactController::class, 'getAll']);
 Route::post('/contacts', [ContactController::class, 'store']);
