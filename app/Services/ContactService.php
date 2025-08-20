@@ -6,20 +6,21 @@ use App\Models\Contact;
 use App\Services\Contracts\ContactServiceInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
+use App\Services\ExternalWebhookService;
 
 class ContactService implements ContactServiceInterface
 {
-    protected HuggyWebhookService $huggyWebhookService;
+    protected ExternalWebhookService $externalWebhookService;
 
-    public function __construct(HuggyWebhookService $huggyWebhookService)
+    public function __construct(ExternalWebhookService $externalWebhookService)
     {
-        $this->huggyWebhookService = $huggyWebhookService;
+        $this->externalWebhookService = $externalWebhookService;
     }
 
     public function create(array $data): Contact
     {
         $contact = Contact::create($data);
-        $this->huggyWebhookService->notify($contact);
+        $this->externalWebhookService->notify($contact, 'contact.created');
         return $contact;
     }
 
@@ -37,7 +38,7 @@ class ContactService implements ContactServiceInterface
         }
 
         $contact->update($data);
-        $this->huggyWebhookService->notify($contact);
+        $this->externalWebhookService->notify($contact, 'contact.updated');
         return $contact;
     }
 
