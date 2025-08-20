@@ -9,9 +9,18 @@ use Illuminate\Support\Collection;
 
 class ContactService implements ContactServiceInterface
 {
+    protected HuggyWebhookService $huggyWebhookService;
+
+    public function __construct(HuggyWebhookService $huggyWebhookService)
+    {
+        $this->huggyWebhookService = $huggyWebhookService;
+    }
+
     public function create(array $data): Contact
     {
-        return Contact::create($data);
+        $contact = Contact::create($data);
+        $this->huggyWebhookService->notify($contact);
+        return $contact;
     }
 
     public function findById(int $id): ?Contact
@@ -28,6 +37,7 @@ class ContactService implements ContactServiceInterface
         }
 
         $contact->update($data);
+        $this->huggyWebhookService->notify($contact);
         return $contact;
     }
 
@@ -45,5 +55,23 @@ class ContactService implements ContactServiceInterface
     public function getAll(): Collection
     {
         return Contact::all();
+    }
+
+    public function findByAny(array $data): ?Contact
+    {
+        return Contact::where(function ($query) use ($data) {
+            if (!empty($data['email'])) {
+                $query->orWhere('email', $data['email']);
+            }
+            if (!empty($data['mobile'])) {
+                $query->orWhere('mobile', $data['mobile']);
+            }
+            if (!empty($data['phone'])) {
+                $query->orWhere('phone', $data['phone']);
+            }
+            if (!empty($data['name'])) {
+                $query->orWhere('name', $data['name']);
+            }
+        })->first();
     }
 }
