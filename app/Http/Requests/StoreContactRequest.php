@@ -23,6 +23,7 @@ class StoreContactRequest extends FormRequest
             'address' => 'nullable|string|max:255',
             'district' => 'nullable|string|max:255',
             'state' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:255',
         ];
     }
 
