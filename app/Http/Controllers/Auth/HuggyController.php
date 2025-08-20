@@ -47,6 +47,7 @@ class HuggyController extends Controller
     {
         $clientId = env('HUGGY_CLIENT_ID');
         $redirectUri = urlencode(env('HUGGY_REDIRECT_URI'));
+        
         $url = "https://auth.huggy.app/oauth/authorize?scope=install_app%20read_agent_profile&response_type=code&redirect_uri={$redirectUri}&client_id={$clientId}";
 
         return redirect($url);
