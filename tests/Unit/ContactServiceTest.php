@@ -14,6 +14,14 @@ class ContactServiceTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected ContactService $service;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->service = app(ContactService::class);
+    }
+
     public function test_create_contact()
     {
         $data = [
@@ -108,5 +116,43 @@ class ContactServiceTest extends TestCase
         $this->assertDatabaseMissing('contacts', [
             'id' => $contact->id
         ]);
+    }
+
+    public function test_find_by_any_returns_contact_by_email()
+    {
+        $contact = Contact::factory()->create(['email' => 'any@email.com']);
+        $found = $this->service->findByAny(['email' => 'any@email.com']);
+        $this->assertNotNull($found);
+        $this->assertEquals($contact->id, $found->id);
+    }
+
+    public function test_find_by_any_returns_contact_by_mobile()
+    {
+        $contact = Contact::factory()->create(['mobile' => '999999999']);
+        $found = $this->service->findByAny(['mobile' => '999999999']);
+        $this->assertNotNull($found);
+        $this->assertEquals($contact->id, $found->id);
+    }
+
+    public function test_find_by_any_returns_contact_by_phone()
+    {
+        $contact = Contact::factory()->create(['phone' => '888888888']);
+        $found = $this->service->findByAny(['phone' => '888888888']);
+        $this->assertNotNull($found);
+        $this->assertEquals($contact->id, $found->id);
+    }
+
+    public function test_find_by_any_returns_contact_by_name()
+    {
+        $contact = Contact::factory()->create(['name' => 'John Doe']);
+        $found = $this->service->findByAny(['name' => 'John Doe']);
+        $this->assertNotNull($found);
+        $this->assertEquals($contact->id, $found->id);
+    }
+
+    public function test_find_by_any_returns_null_when_not_found()
+    {
+        $found = $this->service->findByAny(['email' => 'johndoe@email.com']);
+        $this->assertNull($found);
     }
 }
