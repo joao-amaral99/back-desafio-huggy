@@ -26,11 +26,11 @@ class HuggyWebhookServiceTest extends TestCase
             'messages' => [
                 'createdCustomer' => [
                     [
-                        'name' => 'Unit User',
-                        'email' => 'unit@example.com',
+                        'name' => 'João Teste',
+                        'email' => 'joao.teste@example.com',
                         'phone' => '123456789',
                         'mobile' => '987654321',
-                        'photo' => 'http://example.com/photo.jpg',
+                        'photo' => 'http://imageurl.com/photo.jpg',
                     ]
                 ]
             ]
@@ -39,30 +39,30 @@ class HuggyWebhookServiceTest extends TestCase
         $this->service->handleEvent($payload);
 
         $this->assertDatabaseHas('contacts', [
-            'email' => 'unit@example.com',
-            'name' => 'Unit User',
+            'email' => 'joao.teste@example.com',
+            'name' => 'João Teste',
         ]);
     }
 
     public function test_handle_event_updates_contact()
     {
         Contact::factory()->create([
-            'name' => 'Unit User',
-            'email' => 'unit@example.com',
+            'name' => 'João Teste',
+            'email' => 'joao.teste@example.com',
             'phone' => '123456789',
             'mobile' => '987654321',
-            'photo' => 'http://example.com/photo.jpg',
+            'photo' => 'http://imageurl.com/photo.jpg',
         ]);
 
         $payload = [
             'messages' => [
                 'updatedCustomer' => [
                     [
-                        'name' => 'Unit User Updated',
-                        'email' => 'unit@example.com',
+                        'name' => 'João Teste Atualizado',
+                        'email' => 'joao.teste@example.com',
                         'phone' => '111111111',
                         'mobile' => '222222222',
-                        'photo' => 'http://example.com/photo2.jpg',
+                        'photo' => 'http://imageurl.com/photo.jpg',
                     ]
                 ]
             ]
@@ -71,11 +71,11 @@ class HuggyWebhookServiceTest extends TestCase
         $this->service->handleEvent($payload);
 
         $this->assertDatabaseHas('contacts', [
-            'email' => 'unit@example.com',
-            'name' => 'Unit User Updated',
+            'email' => 'joao.teste@example.com',
+            'name' => 'João Teste Atualizado',
             'phone' => '111111111',
             'mobile' => '222222222',
-            'photo' => 'http://example.com/photo2.jpg',
+            'photo' => 'http://imageurl.com/photo.jpg',
         ]);
     }
 }

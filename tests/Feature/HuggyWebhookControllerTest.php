@@ -16,11 +16,11 @@ class HuggyWebhookControllerTest extends TestCase
             'messages' => [
                 'createdCustomer' => [
                     [
-                        'name' => 'Test User',
-                        'email' => 'test@example.com',
+                        'name' => 'João Teste',
+                        'email' => 'joao.teste@example.com',
                         'phone' => '123456789',
                         'mobile' => '987654321',
-                        'photo' => 'http://example.com/photo.jpg',
+                        'photo' => 'http://imageurl.com/photo.jpg',
                     ]
                 ]
             ]
@@ -30,31 +30,31 @@ class HuggyWebhookControllerTest extends TestCase
 
         $response->assertStatus(200);
         $this->assertDatabaseHas('contacts', [
-            'email' => 'test@example.com',
-            'name' => 'Test User',
-            'photo' => 'http://example.com/photo.jpg',
+            'email' => 'joao.teste@example.com',
+            'name' => 'João Teste',
+            'photo' => 'http://imageurl.com/photo.jpg',
         ]);
     }
 
     public function test_webhook_updates_contact()
     {
         Contact::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'João Teste',
+            'email' => 'joao.teste@example.com',
             'phone' => '123456789',
             'mobile' => '987654321',
-            'photo' => 'http://example.com/photo.jpg',
+            'photo' => 'http://imageurl.com/photo.jpg',
         ]);
 
         $payload = [
             'messages' => [
                 'updatedCustomer' => [
                     [
-                        'name' => 'Test User Updated',
-                        'email' => 'test@example.com',
+                        'name' => 'João Teste Atualizado',
+                        'email' => 'joao.teste@example.com',
                         'phone' => '111111111',
                         'mobile' => '222222222',
-                        'photo' => 'http://example.com/photo2.jpg',
+                        'photo' => 'http://imageurl.com/photo.jpg',
                     ]
                 ]
             ]
@@ -64,11 +64,11 @@ class HuggyWebhookControllerTest extends TestCase
 
         $response->assertStatus(200);
         $this->assertDatabaseHas('contacts', [
-            'email' => 'test@example.com',
-            'name' => 'Test User Updated',
+            'email' => 'joao.teste@example.com',
+            'name' => 'João Teste Atualizado',
             'phone' => '111111111',
             'mobile' => '222222222',
-            'photo' => 'http://example.com/photo2.jpg',
+            'photo' => 'http://imageurl.com/photo.jpg',
         ]);
     }
 }

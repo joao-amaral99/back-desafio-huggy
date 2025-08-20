@@ -120,8 +120,8 @@ class ContactServiceTest extends TestCase
 
     public function test_find_by_any_returns_contact_by_email()
     {
-        $contact = Contact::factory()->create(['email' => 'any@email.com']);
-        $found = $this->service->findByAny(['email' => 'any@email.com']);
+        $contact = Contact::factory()->create(['email' => 'teste@email.com']);
+        $found = $this->service->findByAny(['email' => 'teste@email.com']);
         $this->assertNotNull($found);
         $this->assertEquals($contact->id, $found->id);
     }
