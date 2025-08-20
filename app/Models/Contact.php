@@ -17,6 +17,7 @@ class Contact extends Model
         'address',
         'district',
         'state',
+        'city',
         'photo',
     ];
 }
