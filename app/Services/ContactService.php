@@ -7,6 +7,7 @@ use App\Services\Contracts\ContactServiceInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 use App\Services\ExternalWebhookService;
+use App\Jobs\SendWelcomeEmail;
 
 class ContactService implements ContactServiceInterface
 {
@@ -21,6 +22,7 @@ class ContactService implements ContactServiceInterface
     {
         $contact = Contact::create($data);
         $this->externalWebhookService->notify($contact, 'contact.created');
+        SendWelcomeEmail::dispatch($contact)->delay(now()->addMinutes(1));
         return $contact;
     }
 
