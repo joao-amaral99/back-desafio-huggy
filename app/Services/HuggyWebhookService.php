@@ -43,15 +43,4 @@ class HuggyWebhookService
             $contactService->create($data);
         }
     }
-
-    public function notify(\App\Models\Contact $contact): void
-    {
-        $url = env('EXTERNAL_WEBHOOK_URL');
-
-        if ($url) {
-            $payload = $contact->toArray();
-
-            Http::post($url, $payload);
-        }
-    }
 }
