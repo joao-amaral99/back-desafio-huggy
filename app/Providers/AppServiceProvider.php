@@ -6,6 +6,8 @@ use Illuminate\Support\ServiceProvider;
 use App\Services\ContactService;
 use App\Services\Contracts\ContactServiceInterface;
 use App\Services\ExternalWebhookService;
+use App\Services\TwilioVoipService;
+use App\Services\Contracts\VoipServiceInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -16,6 +18,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(ContactServiceInterface::class, ContactService::class);
         $this->app->singleton(ExternalWebhookService::class);
+        $this->app->bind(VoipServiceInterface::class, TwilioVoipService::class);
     }
 
     /**
