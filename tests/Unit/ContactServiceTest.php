@@ -34,7 +34,7 @@ class ContactServiceTest extends TestCase
             'state' => 'SP'
         ];
 
-        $service = new ContactService();
+        $service = app(ContactService::class);
 
         $contact = $service->create($data);
 
@@ -49,7 +49,7 @@ class ContactServiceTest extends TestCase
     {
         $contact = Contact::factory()->create();
 
-        $service = new ContactService();
+        $service = app(ContactService::class);
 
         $found = $service->findById($contact->id);
 
@@ -65,7 +65,7 @@ class ContactServiceTest extends TestCase
             'email' => 'antigo@email.com',
         ]);
 
-        $service = new ContactService();
+        $service = app(ContactService::class);
 
         $data = [
             'name' => 'Novo Nome',
@@ -93,7 +93,7 @@ class ContactServiceTest extends TestCase
     {
         $contacts = Contact::factory()->count(3)->create();
 
-        $service = new ContactService();
+        $service = app(ContactService::class);
 
         $allContacts = $service->getAll();
 
@@ -109,7 +109,7 @@ class ContactServiceTest extends TestCase
     {
         $contact = Contact::factory()->create();
 
-        $service = new ContactService();
+        $service = app(ContactService::class);      
 
         $service->delete($contact->id);
 
