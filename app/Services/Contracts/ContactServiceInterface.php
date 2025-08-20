@@ -11,6 +11,8 @@ interface ContactServiceInterface
 
     public function findById(int $id): ?Contact;
 
+    public function findByAny(array $data): ?Contact;
+
     public function update(int $id, array $data): Contact;
 
     public function delete(int $id): void;
