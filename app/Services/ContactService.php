@@ -24,7 +24,7 @@ class ContactService implements ContactServiceInterface
         $contact = Contact::create($data);
 
         $this->externalWebhookService->notify($contact, 'contact.created');
-        SendWelcomeEmail::dispatch($contact)->delay(now()->addMinutes(1));
+        SendWelcomeEmail::dispatch($contact)->delay(now()->addMinutes(30));
 
         return $contact;
     }
