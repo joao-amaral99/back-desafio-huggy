@@ -17,6 +17,6 @@ interface ContactServiceInterface
 
     public function delete(int $id): void;
 
-    public function getAll(): Collection;
+    public function getAll(?string $search = null, string $sortBy = 'name', string $sortOrder = 'asc'): Collection;
     
 }
