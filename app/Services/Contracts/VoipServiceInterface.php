@@ -4,5 +4,5 @@ namespace App\Services\Contracts;
 
 interface VoipServiceInterface
 {
-    public function makeCall(string $toNumber): bool;
+    public function makeCall(string $toNumber): string;
 }
