@@ -109,6 +109,19 @@ php artisan serve
 - `GET /api/reports/contacts-by-city` - Relatório de contatos por cidade
 - `GET /api/reports/contacts-by-state` - Relatório de contatos por estado
 
+## 🚀 Collection Postman
+
+### 📥 Importar Collection
+Para facilitar os testes da API, você pode importar a collection completa do Postman:
+
+**[📋 Collection Backend Desafio Huggy](https://joao-amaral99-5837801.postman.co/workspace/Jo%C3%A3o-Amaral-Team's-Workspace~cc908ffc-1baa-4138-8c65-ef6ba2f0eb63/collection/47800560-30938873-fc73-4791-a7ef-b23d02554d34?action=share&source=copy-link&creator=47800560)**
+
+### 🔧 Configuração
+1. Clique no link acima
+2. Clique em **"Import"** no Postman
+3. A collection será importada com os endpoints configurados
+
+
 ## 🗄️ Modelo de Dados
 
 ### Contact
