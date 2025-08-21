@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Auth\HuggyController;
 use App\Http\Controllers\HuggyWebhookController;
+use App\Http\Controllers\ReportController;
 
 Route::get('/', function () {
   return response()->json(['status' => 'API online']);
@@ -22,6 +23,11 @@ Route::post('/contacts', [ContactController::class, 'store']);
 Route::get('/contacts/{id}', [ContactController::class, 'show']);
 Route::put('/contacts/{id}', [ContactController::class, 'update']);
 Route::delete('/contacts/{id}', [ContactController::class, 'delete']);
+
 // VOIP - Twilio
 Route::post('/contacts/{id}/call', [ContactController::class, 'makeCall']);
+
+// Reports
+Route::get('/reports/contacts-by-city', [ReportController::class, 'contactsByCity']);
+Route::get('/reports/contacts-by-state', [ReportController::class, 'contactsByState']);
 
