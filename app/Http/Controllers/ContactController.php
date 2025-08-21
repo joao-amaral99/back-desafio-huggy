@@ -21,9 +21,13 @@ class ContactController extends Controller
         $this->voipService = $voipService;
     }
 
-    public function getAll(): JsonResponse
+    public function getAll(Request $request): JsonResponse
     {
-        $contacts = $this->contactService->getAll();
+        $search = $request->query('search');
+        $sortBy = $request->query('sort_by', 'name');
+        $sortOrder = $request->query('sort_order', 'asc');
+
+        $contacts = $this->contactService->getAll($search, $sortBy, $sortOrder);
         return response()->json(['data' => $contacts]);
     }
 
@@ -74,13 +78,11 @@ class ContactController extends Controller
     public function makeCall($id): JsonResponse
     {
         $contact = $this->contactService->findById($id);
-
         if (!$contact) {
             return response()->json(['message' => 'Contato não encontrado.'], 404);
         }
-
+        
         $phoneNumber = $contact->mobile;
-
         if (empty($phoneNumber)) {
             $phoneNumber = $contact->phone;
         }
@@ -90,19 +92,17 @@ class ContactController extends Controller
                 'message' => 'O contato não possui número de telefone.'
             ], 400);
         }
-
-        $success = $this->voipService->makeCall($phoneNumber);
-
-        if ($success) {
+        
+        $result = $this->voipService->makeCall($phoneNumber);
+        
+        if ($result === 'success') {
             return response()->json([
-                'message' => 'Ligação iniciada com sucesso!',
-                'contact' => $contact->name,
-                'phone' => $phoneNumber
+                'message' => 'Sucesso! Aguarde a ligação.',
             ]);
         }
-
+        
         return response()->json([
-            'message' => 'Erro ao iniciar ligação.'
+            'message' => $result
         ], 500);
     }
 }
