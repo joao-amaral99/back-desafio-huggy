@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 use App\Services\ExternalWebhookService;
 use App\Jobs\SendWelcomeEmail;
+use Illuminate\Support\Facades\DB;
 
 class ContactService implements ContactServiceInterface
 {
@@ -62,18 +63,20 @@ class ContactService implements ContactServiceInterface
         $query = Contact::query();
 
         if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'ILIKE', "%{$search}%")
-                  ->orWhere('email', 'ILIKE', "%{$search}%")
-                  ->orWhere('phone', 'ILIKE', "%{$search}%")
-                  ->orWhere('mobile', 'ILIKE', "%{$search}%")
-                  ->orWhere('city', 'ILIKE', "%{$search}%")
-                  ->orWhere('state', 'ILIKE', "%{$search}%");
+            $searchLower = strtolower($search);
+    
+            $query->where(function ($q) use ($searchLower) {
+                $q->whereRaw('lower(name) LIKE ?', ["%{$searchLower}%"])
+                  ->orWhereRaw('lower(email) LIKE ?', ["%{$searchLower}%"])
+                  ->orWhereRaw('lower(phone) LIKE ?', ["%{$searchLower}%"])
+                  ->orWhereRaw('lower(mobile) LIKE ?', ["%{$searchLower}%"])
+                  ->orWhereRaw('lower(city) LIKE ?', ["%{$searchLower}%"])
+                  ->orWhereRaw('lower(state) LIKE ?', ["%{$searchLower}%"]);
             });
         }
     
         $sortOrder = strtolower($sortOrder) === 'desc' ? 'desc' : 'asc';
-
+    
         return $query->orderBy($sortBy, $sortOrder)->get();
     }
 
@@ -94,4 +97,28 @@ class ContactService implements ContactServiceInterface
             }
         })->first();
     }
+
+    // Reports
+    public function contactsByCity(): Collection
+    {
+        $contactsByCity = Contact::select('city', DB::raw('count(*) as count'))
+            ->whereNotNull('city')
+            ->groupBy('city')
+            ->orderBy('count', 'desc')
+            ->get();
+
+        return $contactsByCity;
+    }
+
+    public function contactsByState(): Collection
+    {
+        $contactsByState = Contact::select('state', DB::raw('count(*) as count'))
+            ->whereNotNull('state')
+            ->groupBy('state')
+            ->orderBy('count', 'desc')
+            ->get();
+
+        return $contactsByState;
+    }
+
 }
