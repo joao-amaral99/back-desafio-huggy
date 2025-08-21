@@ -117,6 +117,29 @@ class ContactApiTest extends TestCase
         }
     }
 
+    public function test_get_all_contacts_with_search_filter_api()
+    {
+        Contact::factory()->create(['name' => 'Alice', 'email' => 'alice@example.com']);
+        Contact::factory()->create(['name' => 'Bob', 'email' => 'bob@test.com']);
+        Contact::factory()->create(['name' => 'Charlie', 'city' => 'New York']);
+
+        $response = $this->getJson('/api/contacts?search=alice');
+
+        $response->assertStatus(200)
+            ->assertJsonCount(1, 'data')
+            ->assertJsonFragment(['name' => 'Alice']);
+
+        $response = $this->getJson('/api/contacts?search=york');
+
+        $response->assertStatus(200)
+            ->assertJsonCount(1, 'data')
+            ->assertJsonFragment(['name' => 'Charlie']);
+
+        $response = $this->getJson('/api/contacts?search=nonexistent');
+        $response->assertStatus(200)
+            ->assertJsonCount(0, 'data');
+    }
+
     public function test_delete_contact_api()
     {
         $contact = Contact::factory()->create();
