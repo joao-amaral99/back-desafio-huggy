@@ -21,7 +21,7 @@ class TwilioVoipService implements VoipServiceInterface
         $this->fromNumber = env('TWILIO_PHONE_NUMBER', '');
     }
 
-    public function makeCall(string $toNumber): bool
+    public function makeCall(string $toNumber): string
     {
         try {
             $call = $this->twilio->calls->create(
@@ -32,22 +32,45 @@ class TwilioVoipService implements VoipServiceInterface
                     'method' => 'POST'
                 ]
             );
-
+            
             Log::info('Ligação iniciada com sucesso', [
                 'call_sid' => $call->sid,
                 'to_number' => $toNumber,
                 'from_number' => $this->fromNumber
             ]);
-
-            return true;
-
-        } catch (\Exception $e) {
-            Log::error('Erro ao iniciar ligação', [
+            
+            return 'success';
+            
+        } catch (\Twilio\Exceptions\RestException $e) {
+            Log::error('Erro Twilio ao iniciar ligação', [
                 'to_number' => $toNumber,
-                'error' => $e->getMessage()
+                'error_message' => $e->getMessage(),
             ]);
-
-            return false;
+            
+            return $this->translateTwilioError($e->getMessage());
         }
+    }
+
+    private function translateTwilioError(string $originalMessage): string
+    {
+        $originalMessage = str_replace('[HTTP 400]', '', $originalMessage);
+
+        $errorMap = [
+            'is unverified. Trial accounts may only make calls to verified numbers' => 'não está verificado. Contas de teste só podem ligar para números verificados',
+            'Unable to create record' => 'Não foi possível realizar a ligação',
+            'The number' => 'O número',
+        ];
+        
+        $translatedMessage = $originalMessage;
+        
+        foreach ($errorMap as $englishMessage => $portugueseMessage) {
+            $translatedMessage = str_replace($englishMessage, $portugueseMessage, $translatedMessage);
+        }
+
+        if ($translatedMessage === $originalMessage) {
+            return $translatedMessage;
+        }
+        
+        return $translatedMessage;
     }
 }
