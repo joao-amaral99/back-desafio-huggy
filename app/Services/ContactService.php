@@ -21,8 +21,10 @@ class ContactService implements ContactServiceInterface
     public function create(array $data): Contact
     {
         $contact = Contact::create($data);
+
         $this->externalWebhookService->notify($contact, 'contact.created');
         SendWelcomeEmail::dispatch($contact)->delay(now()->addMinutes(1));
+
         return $contact;
     }
 
@@ -55,9 +57,24 @@ class ContactService implements ContactServiceInterface
         $contact->delete();
     }
 
-    public function getAll(): Collection
+    public function getAll(?string $search = null, string $sortBy = 'name', string $sortOrder = 'asc'): Collection
     {
-        return Contact::all();
+        $query = Contact::query();
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'ILIKE', "%{$search}%")
+                  ->orWhere('email', 'ILIKE', "%{$search}%")
+                  ->orWhere('phone', 'ILIKE', "%{$search}%")
+                  ->orWhere('mobile', 'ILIKE', "%{$search}%")
+                  ->orWhere('city', 'ILIKE', "%{$search}%")
+                  ->orWhere('state', 'ILIKE', "%{$search}%");
+            });
+        }
+    
+        $sortOrder = strtolower($sortOrder) === 'desc' ? 'desc' : 'asc';
+
+        return $query->orderBy($sortBy, $sortOrder)->get();
     }
 
     public function findByAny(array $data): ?Contact
