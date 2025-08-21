@@ -105,6 +105,75 @@ class ContactServiceTest extends TestCase
         }
     }
 
+    public function test_get_all_filters_by_search_term()
+    {
+        $expectedCollection = new Collection([
+            (object) ['id' => 1, 'name' => 'John Doe', 'email' => 'john@example.com']
+        ]);
+    
+        $mockService = Mockery::mock(ContactService::class);
+    
+        $mockService->shouldReceive('getAll')
+        ->with('John', 'name', 'asc')
+        ->once()
+        ->andReturn(new Collection([
+            (object) ['id' => 1, 'name' => 'John Doe', 'email' => 'john@example.com']
+        ]));
+
+        $this->app->instance(ContactService::class, $mockService);
+
+        $filteredContacts = $this->app->make(ContactService::class)->getAll('John', 'name', 'asc');
+
+        $this->assertCount(1, $filteredContacts);
+        $this->assertEquals('John Doe', $filteredContacts->first()->name);
+    }
+    
+    public function test_get_all_sorts_contacts_by_name_asc()
+    {
+        $expectedCollection = new Collection([
+            (object) ['id' => 1, 'name' => 'A Test'],
+            (object) ['id' => 2, 'name' => 'B Test'],
+            (object) ['id' => 3, 'name' => 'C Test'],
+        ]);
+    
+        $mockService = Mockery::mock(ContactService::class);
+    
+        $mockService->shouldReceive('getAll')
+                    ->with(null, 'name', 'asc')
+                    ->once()
+                    ->andReturn($expectedCollection);
+    
+        $this->app->instance(ContactService::class, $mockService);
+    
+        $sortedContacts = $this->app->make(ContactService::class)->getAll(sortBy: 'name', sortOrder: 'asc');
+    
+        $this->assertEquals('A Test', $sortedContacts->first()->name);
+        $this->assertEquals('C Test', $sortedContacts->last()->name);
+    }
+    
+    public function test_get_all_filters_and_sorts_contacts()
+    {
+        $expectedCollection = new Collection([
+            (object) ['id' => 1, 'name' => 'Zidane', 'city' => 'Paris'],
+            (object) ['id' => 2, 'name' => 'Henry', 'city' => 'Paris'],
+        ]);
+    
+        $mockService = Mockery::mock(ContactService::class);
+    
+        $mockService->shouldReceive('getAll')
+                    ->with('Paris', 'name', 'desc')
+                    ->once()
+                    ->andReturn($expectedCollection);
+    
+        $this->app->instance(ContactService::class, $mockService);
+    
+        $contacts = $this->app->make(ContactService::class)->getAll('Paris', 'name', 'desc');
+    
+        $this->assertCount(2, $contacts);
+        $this->assertEquals('Zidane', $contacts->first()->name);
+        $this->assertEquals('Henry', $contacts->last()->name);
+    }
+
     public function test_delete_contact()
     {
         $contact = Contact::factory()->create();
