@@ -14,7 +14,7 @@
             padding: 20px;
         }
         .header {
-            background-color: #4707ff50;
+            background-color: #321bde;
             color: white;
             padding: 20px;
             text-align: center;
