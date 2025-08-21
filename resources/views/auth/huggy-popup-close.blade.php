@@ -3,10 +3,16 @@
   <body>
     <script>
       function enviarToken() {
-        window.opener && window.opener.postMessage(
-          { token: "{{ $token ?? '' }}" },
-          "*"
-        );
+        if (window.opener) {
+
+          window.opener.postMessage(
+            { token: "{{ $token ?? '' }}" },
+            "*"
+          );
+        } else {
+          console.error('O objeto window.opener não está disponível. O postMessage não pode ser enviado.');
+        }
+
         setTimeout(() => window.close(), 300);
       }
 
